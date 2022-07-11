@@ -2,10 +2,19 @@
 Simple utility to mock example objects based on JSON schema definitions
 
 ## Features
+
 Minimal & deterministic. Predictable single example with no randomisation involved
+
+TypeScript types included
+
+Supports $ref pointers
+
 Thoroughly tested feature set
+
 Supports example, default
+
 Supports anyOf, allOf, oneOf
+
 Built-in examples for following string formats:
 
  - email 
@@ -19,8 +28,6 @@ Built-in examples for following string formats:
  - date-time 
  - uuid
 
-TypeScript types included
-Supports $ref pointers
 
 ## Install
 
