@@ -6,7 +6,7 @@ const _ = require('lodash'),
 /**
  * 定义 MockSchema 类
  */
-const MockSchema = function ApipostMockSchema() {
+const MockSchema = function ApipostMockSchema(this: any) {
     // mock 一个jsonschema
     function mock(schema: any) {
         return new Promise((resolve, reject) => {
@@ -54,7 +54,7 @@ const MockSchema = function ApipostMockSchema() {
     }
 
     // 递归设置参数mock值
-    function recursionJsonSchema(schema: any) {
+    function recursionJsonSchema(schema: any):any {
         // oneOf 类型 
         if (_.isArray(schema.oneOf)) {
             return recursionJsonSchema(schema.oneOf[_.random(0, schema.oneOf.length - 1)])
@@ -176,7 +176,7 @@ const MockSchema = function ApipostMockSchema() {
                 }
 
                 if (_.isArray(schema.enum)) {
-                    schema.enum.forEach(item => {
+                    schema.enum.forEach((item: any) => {
                         if (_.inRange(item, min, max)) {
                             return item;
                         }
