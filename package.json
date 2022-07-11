@@ -1,0 +1,11 @@
+{
+  "name": "apipost-mock-schema",
+  "version": "0.0.1",
+  "description": "Simple utility to mock example objects based on JSON schema definitions",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "author": "Apipost-Team",
+  "license": "MIT"
+}
