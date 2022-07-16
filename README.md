@@ -1,4 +1,7 @@
 # 🚀 apipost-mock-schema
+
+[![Package Quality](https://packagequality.com/shield/apipost-mock-schema.svg)](https://packagequality.com/#?package=apipost-mock-schema)
+
 Simple utility to mock example objects based on JSON schema definitions
 
 ## Features
