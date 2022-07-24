@@ -60,6 +60,7 @@ const schema = {
     },
   },
 };
+const MockSchema = require('apipost-mock-schema');
 const myMockSchema = new MockSchema();
 
 myMockSchema.mock(schema).then(res => {
