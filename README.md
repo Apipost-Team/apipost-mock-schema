@@ -39,7 +39,7 @@ $ npm install apipost-mock-schema
 ```
 
 ##  Usage
-```
+```javascript
 const schema = {
   type: 'array',
   items: {
