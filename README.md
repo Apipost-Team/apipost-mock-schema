@@ -1,4 +1,7 @@
 # 🚀 apipost-mock-schema
+
+[![Package Quality](https://packagequality.com/shield/apipost-mock-schema.svg)](https://packagequality.com/#?package=apipost-mock-schema)
+
 Simple utility to mock example objects based on JSON schema definitions
 
 ## Features
@@ -36,7 +39,7 @@ $ npm install apipost-mock-schema
 ```
 
 ##  Usage
-```
+```javascript
 const schema = {
   type: 'array',
   items: {
@@ -57,10 +60,22 @@ const schema = {
     },
   },
 };
+const MockSchema = require('apipost-mock-schema');
 const myMockSchema = new MockSchema();
 
 myMockSchema.mock(schema).then(res => {
     console.log(res)
+    
+    // will return
+    /*
+    [
+        {
+            "id": 7156472017141059,
+            "name": "John Doe",
+            "email": "y.hbm@tsqxod.dm"
+        }
+    ]
+    */
 }).catch(err => {
     console.log(err)
 })
