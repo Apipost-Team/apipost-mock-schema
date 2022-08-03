@@ -129,6 +129,9 @@ const MockSchema = function ApipostMockSchema(this: any) {
                 } else {
                     let str: any = schema.default;
 
+                    const minln: number = !_.isNil(schema.minLength) ? schema.minLength : 0;
+                    const maxln: number = !_.isNil(schema.maxLength) ? schema.maxLength : str.length;
+
                     if (_.isString(schema.format)) {
                         const formatExample: any = {
                             email: intelligentMockJs(`@email()`),
@@ -141,13 +144,11 @@ const MockSchema = function ApipostMockSchema(this: any) {
                             'json-pointer': '/foo/bar',
                             'date-time': new Date('1970-01-01').toJSON(),
                             uuid: uuid.v4(),
-                            _default: intelligentMockJs('@ctitle'),
+                            _default: intelligentMockJs(`@ctitle(${minln}, ${maxln})`),
                         };
 
                         str = formatExample[schema.format] || formatExample._default;
-                        const minln: number = !_.isNil(schema.minLength) ? schema.minLength : 0;
-                        const maxln: number = !_.isNil(schema.maxLength) ? schema.maxLength : str.length;
-
+                        
                         if (str === formatExample._default && str.length < minln) {
                             return _.padEnd(str, minln, str);
                         }
@@ -156,9 +157,9 @@ const MockSchema = function ApipostMockSchema(this: any) {
                         if (!str) {
                             if (_.isString(schema.mockField)) {
                                 let mockStr: any = intelligentMockJs(schema.mockField);
-                                return (mockStr == schema.mockField || !_.isString(mockStr)) ? intelligentMockJs('@ctitle') : mockStr
+                                return (mockStr == schema.mockField || !_.isString(mockStr)) ? intelligentMockJs(`@ctitle(${minln}, ${maxln})`) : mockStr
                             } else {
-                                return intelligentMockJs('@ctitle');
+                                return intelligentMockJs(`@ctitle(${minln}, ${maxln})`);
                             }
                         }
                     }
