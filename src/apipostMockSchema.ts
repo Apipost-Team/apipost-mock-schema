@@ -9,6 +9,7 @@ const _ = require('lodash'),
 const MockSchema = function ApipostMockSchema(this: any) {
     // mock 一个jsonschema
     function mock(schema: any) {
+        schema = _.cloneDeep(schema);
         return new Promise((resolve, reject) => {
             schema = resolveAllOf(schema)
             $RefParser.dereference(schema, (err: any, schema: any) => {
