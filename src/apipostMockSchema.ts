@@ -130,7 +130,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
                     let str: any = schema.default;
 
                     const minln: number = !_.isNil(schema.minLength) ? schema.minLength : 0;
-                    const maxln: number = !_.isNil(schema.maxLength) ? schema.maxLength : str.length;
+                    const maxln: number = !_.isNil(schema.maxLength) ? schema.maxLength : _.isString(str) ? str.length : 0;
 
                     if (_.isString(schema.format)) {
                         const formatExample: any = {
