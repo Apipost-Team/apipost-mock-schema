@@ -256,3 +256,4 @@ new Array('address').forEach((func) => {
 
 Mockjs.Random.extend(_mockjsRandomExtend);
 module.exports = MockSchema;
+export default MockSchema;
