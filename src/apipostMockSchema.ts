@@ -6,18 +6,18 @@ const _ = require('lodash'),
 /**
  * 定义 MockSchema 类
  */
-const MockSchema = function ApipostMockSchema() {
-    // mock 一个jsonschema
-  function mock(schema) {
+const MockSchema = function ApipostMockSchema(this: any) {
+  // mock 一个jsonschema
+  function mock(schema: any) {
     schema = _.cloneDeep(schema);
     return new Promise((resolve, reject) => {
       schema = resolveAllOf(schema);
-      $RefParser.dereference(schema, (err, schema) => {
+      $RefParser.dereference(schema, (err: any, schema: any) => {
         if (err) {
           reject({});
         } else {
           try {
-                        // 修正 schema 字段, 增加 mockField 字段
+            // 修正 schema 字段, 增加 mockField 字段
             (function resolveSchemaFields(schema) {
               if (_.isObject(schema.properties)) {
                 for (const field in schema.properties) {
@@ -46,40 +46,40 @@ const MockSchema = function ApipostMockSchema() {
     });
   }
 
-    // 智能 mock
-    // todo 后续支持更多用户自定义 mock
-  function intelligentMockJs(mock) {
+  // 智能 mock
+  // todo 后续支持更多用户自定义 mock
+  function intelligentMockJs(mock: any) {
     return Mockjs.mock(String(mock));
   }
 
-    // 递归设置参数mock值
-  function recursionJsonSchema(schema) {
-        // oneOf 类型
+  // 递归设置参数mock值
+  function recursionJsonSchema(schema: any): any {
+    // oneOf 类型
     if (_.isArray(schema.oneOf)) {
       return recursionJsonSchema(schema.oneOf[_.random(0, schema.oneOf.length - 1)]);
     }
 
-        // anyOf 类型
+    // anyOf 类型
     if (_.isArray(schema.anyOf)) {
       return recursionJsonSchema(schema.anyOf[_.random(0, schema.anyOf.length - 1)]);
     }
 
-        // default
+    // default
     if (!_.isUndefined(schema.default)) {
       return schema.default;
     }
 
-        // example
+    // example
     if (!_.isUndefined(schema.example)) {
       return schema.example;
     }
 
-        // enum
+    // enum
     if (_.isArray(schema.enum)) {
       return schema.enum[_.random(0, schema.enum.length - 1)];
     }
 
-        // other type
+    // other type
     const type = _.isArray(schema) ? _.first(schema.type) : schema.type;
 
     switch (type) {
@@ -106,9 +106,9 @@ const MockSchema = function ApipostMockSchema() {
 
         if (_.isArray(item.anyOf)) {
           items.push(recursionJsonSchema(item.anyOf[_.random(0, item.anyOf.length - 1)]));
-                    // for (let option of item.anyOf) {
-                    //     items.push(recursionJsonSchema(option));
-                    // }
+          // for (let option of item.anyOf) {
+          //     items.push(recursionJsonSchema(option));
+          // }
         }
 
         if (_.isArray(item.oneOf)) {
@@ -175,7 +175,7 @@ const MockSchema = function ApipostMockSchema() {
         }
 
         if (_.isArray(schema.enum)) {
-          schema.enum.forEach((item) => {
+          schema.enum.forEach((item: any) => {
             if (_.inRange(item, min, max)) {
               return item;
             }
@@ -196,24 +196,24 @@ const MockSchema = function ApipostMockSchema() {
     return schema;
   }
 
-    // 修正 schema的 allOf
-  function resolveAllOf(schema) {
+  // 修正 schema的 allOf
+  function resolveAllOf(schema: any) {
     if (schema.allOf && schema.allOf[0]) {
       schema = _.reduce(
-                schema.allOf,
-                (combined, subschema) => _.merge({}, combined, resolveAllOf(subschema)),
-                schema,
-            );
+        schema.allOf,
+        (combined: any, subschema: any) => _.merge({}, combined, resolveAllOf(subschema)),
+        schema,
+      );
     }
     return schema;
   }
 
-    // 对外暴漏 mock 方法
+  // 对外暴漏 mock 方法
   Object.defineProperty(this, 'mock', {
     value: mock,
   });
 
-    // 对外暴漏 intelligentMockJs 方法
+  // 对外暴漏 intelligentMockJs 方法
   Object.defineProperty(this, 'intelligentMockJs', {
     value: intelligentMockJs,
   });
@@ -226,7 +226,7 @@ const _mockjsRandomExtend = {};
 
 new Array('phone', 'mobile').forEach((func) => {
   _mockjsRandomExtend[func] = function () {
-    return this.pick(['131', '132', '137', '188']) + Mockjs.mock(/\d{8}/);
+    return this["pick"](['131', '132', '137', '188']) + Mockjs.mock(/\d{8}/);
   };
 });
 
