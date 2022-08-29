@@ -13,15 +13,19 @@
     "build": "npm version patch && rollup -c rollup.config.js && npm publish"
   },
   "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "core-js": "^3.9.0",
+    "lodash": "^4.17.21",
+    "mockjs": "^1.1.0",
     "rollup": "^2.74.1",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript": "^1.0.1",
     "rollup-plugin-typescript2": "^0.31.2",
-    "swagger-client": "^3.18.5"
+    "swagger-client": "^3.18.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.17",
