@@ -55,7 +55,10 @@ const MockSchema = function ApipostMockSchema(this: any) {
     }
 
     // 递归设置参数mock值
-    function recursionJsonSchema(schema: any):any {
+    function recursionJsonSchema(schema: any): any {
+        // schema type
+        const type = _.isArray(schema) ? _.first(schema.type) : schema.type;
+
         // oneOf 类型 
         if (_.isArray(schema.oneOf)) {
             return recursionJsonSchema(schema.oneOf[_.random(0, schema.oneOf.length - 1)])
@@ -68,21 +71,43 @@ const MockSchema = function ApipostMockSchema(this: any) {
 
         // default
         if (!_.isUndefined(schema.default)) {
-            return schema.default
+            switch (type) {
+                case 'string':
+                    return String(schema.default);
+                    break;
+                case 'number':
+                case 'integer':
+                    return Number(schema.default);
+                    break;
+                case 'boolean':
+                    return Boolean(schema.default);
+                    break;
+            }
         }
 
         // example
         if (!_.isUndefined(schema.example)) {
-            return schema.example
+            switch (type) {
+                case 'string':
+                    return String(schema.example);
+                    break;
+                case 'number':
+                case 'integer':
+                    return Number(schema.example);
+                    break;
+                case 'boolean':
+                    return Boolean(schema.example);
+                    break;
+                default:
+                    return schema.example;
+                    break;
+            }
         }
 
         // enum
         if (_.isArray(schema.enum)) {
             return schema.enum[_.random(0, schema.enum.length - 1)];
         }
-
-        // other type
-        const type = _.isArray(schema) ? _.first(schema.type) : schema.type;
 
         switch (type) {
             case 'null':
@@ -148,7 +173,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
                         };
 
                         str = formatExample[schema.format] || formatExample._default;
-                        
+
                         if (str === formatExample._default && str.length < minln) {
                             return _.padEnd(str, minln, str);
                         }
@@ -157,7 +182,13 @@ const MockSchema = function ApipostMockSchema(this: any) {
                         if (!str) {
                             if (_.isString(schema.mockField)) {
                                 let mockStr: any = intelligentMockJs(schema.mockField);
-                                return (mockStr == schema.mockField || !_.isString(mockStr)) ? intelligentMockJs(`@ctitle(${minln}, ${maxln})`) : mockStr
+
+                                // fix bug
+                                if (schema.mockField != '') {
+                                    return String(mockStr);
+                                } else {
+                                    return intelligentMockJs('@ctitle');
+                                }
                             } else {
                                 return intelligentMockJs(`@ctitle(${minln}, ${maxln})`);
                             }
@@ -180,11 +211,22 @@ const MockSchema = function ApipostMockSchema(this: any) {
                 if (_.isArray(schema.enum)) {
                     schema.enum.forEach((item: any) => {
                         if (_.inRange(item, min, max)) {
-                            return item;
+                            return Number(item);
                         }
                     })
                 } else {
-                    return intelligentMockJs(`@integer(${min}, ${max})`)
+                    if (schema.mockField != '') {
+                        try {
+                            let mockNum = Number(intelligentMockJs(schema.mockField));
+
+                            if (!_.isNaN(mockNum) && !_.isNil(mockNum)) {
+                                return mockNum;
+                            }
+                        } catch (e) {
+                            return Number(intelligentMockJs(`@integer(${min}, ${max})`))
+                        }
+                    }
+                    return Number(intelligentMockJs(`@integer(${min}, ${max})`))
                 }
                 break;
             default:
@@ -223,12 +265,16 @@ const MockSchema = function ApipostMockSchema(this: any) {
  */
 const _mockjsRandomExtend: any = {};
 
-new Array('phone', 'mobile').forEach(func => {
+new Array('telephone', 'phone', 'mobile').forEach(func => {
     _mockjsRandomExtend[func] = function () {
         return this.pick(['131', '132', '137', '188']) + Mockjs.mock(/\d{8}/)
     };
 })
-
+new Array('username', 'user_name', 'nickname', 'nick_name').forEach(func => {
+    _mockjsRandomExtend[func] = function () {
+        return Mockjs.mock(`@cname`)
+    };
+})
 new Array('avatar', 'icon', 'img', 'photo', 'pic').forEach(func => {
     _mockjsRandomExtend[func] = function () {
         return Mockjs.mock(`@image('400x400')`)
@@ -241,9 +287,9 @@ new Array('description').forEach(func => {
     };
 })
 
-new Array('id').forEach(func => {
+new Array('id', 'userid', 'user_id', 'articleid', 'article_id').forEach(func => {
     _mockjsRandomExtend[func] = function () {
-        return uuid.v4()
+        return Mockjs.mock(`@integer(100, 1000)`)
     };
 })
 
