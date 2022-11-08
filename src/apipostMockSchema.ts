@@ -25,7 +25,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
                                     if (_.isObject(schema.properties[field].mock) && _.isString(schema.properties[field].mock.mock)) {
                                         schema.properties[field].mockField = schema.properties[field].mock.mock
                                     } else {
-                                        schema.properties[field].mockField = `@${field}`
+                                        schema.properties[field].mockField = ``
                                     }
 
                                     if (schema.properties && _.isObject(schema.properties[field])) {
@@ -54,17 +54,29 @@ const MockSchema = function ApipostMockSchema(this: any) {
         return Mockjs.mock(String(mock))
     }
 
+    const getRandomBool=()=>{
+      return Math.round(Math.random()*100)%2===1;
+    }
+
+
     // 递归设置参数mock值
     function recursionJsonSchema(schema: any): any {
+
+      //如果允许空，则返回随机空值
+      if(schema?.apipiost_allow_null===true&&getRandomBool()===true){
+        return null
+      }
+
+
         // schema type
         const type = _.isArray(schema) ? _.first(schema.type) : schema.type;
 
-        // oneOf 类型 
+        // oneOf 类型
         if (_.isArray(schema.oneOf)) {
             return recursionJsonSchema(schema.oneOf[_.random(0, schema.oneOf.length - 1)])
         }
 
-        // anyOf 类型 
+        // anyOf 类型
         if (_.isArray(schema.anyOf)) {
             return recursionJsonSchema(schema.anyOf[_.random(0, schema.anyOf.length - 1)])
         }
@@ -149,6 +161,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
                 return schema.maxItems ? _.take(items, schema.maxItems) : items;
                 break;
             case 'string':
+              console.log(schema);
                 if (_.isArray(schema.enum)) {
                     return schema.enum[_.random(0, schema.enum.length - 1)];
                 } else {
@@ -237,7 +250,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
         return schema;
     }
 
-    // 修正 schema的 allOf 
+    // 修正 schema的 allOf
     function resolveAllOf(schema: any) {
         if (schema.allOf && schema.allOf[0]) {
             schema = _.reduce(
