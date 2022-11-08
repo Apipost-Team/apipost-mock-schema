@@ -2,7 +2,7 @@
   "name": "apipost-mock-schema",
   "version": "0.0.13",
   "description": "Simple utility to mock example objects based on JSON schema definitions",
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "files": [
     "libs",
     "icons",
