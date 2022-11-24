@@ -1,8 +1,8 @@
 {
   "name": "apipost-mock-schema",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Simple utility to mock example objects based on JSON schema definitions",
-  "main":"dist/index.js",
+  "main": "dist/index.js",
   "files": [
     "libs",
     "icons",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "libs":"rollup -c rollup.config.js",
+    "libs": "rollup -c rollup.config.js",
     "build": "npm version patch && rollup -c rollup.config.js && npm publish"
   },
   "dependencies": {
