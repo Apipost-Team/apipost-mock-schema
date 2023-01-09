@@ -58,6 +58,9 @@ const MockSchema = function ApipostMockSchema(this: any) {
                 if (schema.type === 'array' && _.isObject(schema.items)) {
                   resolveSchemaFields(schema.items);
                 }
+                else if (_.isString(schema?.mock?.mock)) {
+                  schema.mockField = schema?.mock?.mock;
+                }
                 if (_.isArray(schema.oneOf)) {
                   resolveSchemaFields(schema.oneOf);
                 }
