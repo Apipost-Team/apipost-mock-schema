@@ -444,6 +444,12 @@ new Array('id', 'userid', 'user_id', 'articleid', 'article_id').forEach((func) =
   };
 });
 
+
+//空字符串
+_mockjsRandomExtend['empty']=function(){
+  return ''
+}
+
 Mockjs.Random.extend(_mockjsRandomExtend);
 
 export default MockSchema;
