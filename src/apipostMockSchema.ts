@@ -2,7 +2,7 @@ const _ = require('lodash'),
   uuid = require('uuid'),
   $RefParser = require('@apidevtools/json-schema-ref-parser'),
   Mockjs = require('mockjs');
-const { convertToBoolean } = require('../utils/toBoolean');
+import {convertToBoolean} from '../utils/toBoolean'
 
 /**
  * 定义 MockSchema 类

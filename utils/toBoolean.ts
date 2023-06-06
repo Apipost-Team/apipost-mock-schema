@@ -1,5 +1,5 @@
 type ConvertData = string | 1 | 0 | boolean;
-const convertToBoolean = (value: ConvertData) => {
+export const convertToBoolean = (value: ConvertData) => {
   if (typeof value === 'string') {
     if (value.trim() === 'true') {
       return true;
@@ -16,8 +16,4 @@ const convertToBoolean = (value: ConvertData) => {
     return value;
   }
   return null
-};
-
-module.exports = {
-  convertToBoolean,
 };
