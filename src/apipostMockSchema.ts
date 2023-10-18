@@ -2,13 +2,15 @@ const _ = require('lodash'),
   uuid = require('uuid'),
   $RefParser = require('@apidevtools/json-schema-ref-parser'),
   Mockjs = require('mockjs');
-import {convertToBoolean} from '../utils/toBoolean'
+import { convertToBoolean } from '../utils/toBoolean';
+
+import { MockDataProps } from './type';
 
 /**
  * 定义 MockSchema 类
  */
 const MockSchema = function ApipostMockSchema(this: any) {
-  let mockDataList: any[] = [];
+  let mockDataList: MockDataProps[] = [];
 
   // mock 一个jsonschema
   function mock(schema: any) {
@@ -68,7 +70,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
               }
             })(schema);
 
-            resolve(recursionJsonSchema([], schema));
+            resolve(recursionJsonSchema([], schema, true));
           } catch (e: any) {
             reject({});
           }
@@ -91,12 +93,28 @@ const MockSchema = function ApipostMockSchema(this: any) {
     return Math.round(Math.random() * 100) % 2 === 1;
   };
 
+  const getRequired = (path: String[], requireds: Boolean | String[]) => {
+    if (_.isBoolean(requireds)) {
+      return requireds;
+    }
+    const currentAttr = (Array.isArray(path) ? path?.[path.length - 1] : undefined) as any;
+    if (Array.isArray(requireds) && _.isString(currentAttr) && requireds.includes(currentAttr)) {
+      return true;
+    }
+    return false;
+  };
+
   // 递归设置参数mock值
-  function recursionJsonSchema(path: any[] = [], schema: any): any {
+  function recursionJsonSchema(path: any[] = [], schema: any, requireds: boolean | string[]): any {
     // schema type
     const type = _.isArray(schema) ? _.first(schema.type) : schema.type;
+    const is_required = getRequired(path, requireds) as Boolean;
     const allow_null = schema?.apipiost_allow_null ?? false;
     const description = schema?.description ?? '';
+
+    const childRequireds = schema.required;
+
+    //  console.log('allow_null======', allow_null);
 
     //如果允许空，则返回随机空值
     if (allow_null === true && getRandomBool() === true) {
@@ -106,18 +124,28 @@ const MockSchema = function ApipostMockSchema(this: any) {
         type,
         allow_null,
         description,
+        is_required,
       });
+
       return null;
     }
 
     // oneOf 类型
     if (_.isArray(schema.oneOf)) {
-      return recursionJsonSchema(path, schema.oneOf[_.random(0, schema.oneOf.length - 1)]);
+      return recursionJsonSchema(
+        path,
+        schema.oneOf[_.random(0, schema.oneOf.length - 1)],
+        childRequireds
+      );
     }
 
     // anyOf 类型
     if (_.isArray(schema.anyOf)) {
-      return recursionJsonSchema(path, schema.anyOf[_.random(0, schema.anyOf.length - 1)]);
+      return recursionJsonSchema(
+        path,
+        schema.anyOf[_.random(0, schema.anyOf.length - 1)],
+        childRequireds
+      );
     }
 
     // default
@@ -141,6 +169,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
         type,
         allow_null,
         description,
+        is_required,
       });
       return defaultData;
     }
@@ -169,6 +198,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
         type,
         allow_null,
         description,
+        is_required,
       });
       return exampleData;
     }
@@ -182,6 +212,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
         type,
         allow_null,
         description,
+        is_required,
       });
       return enumData;
     }
@@ -194,6 +225,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
           type,
           allow_null,
           description,
+          is_required,
         });
         return null;
         break;
@@ -208,6 +240,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
           type,
           allow_null,
           description,
+          is_required,
         });
         return bolVal;
         break;
@@ -218,11 +251,16 @@ const MockSchema = function ApipostMockSchema(this: any) {
           type,
           allow_null,
           description,
+          is_required,
         });
         let objData = {};
         if (schema.hasOwnProperty('properties') && Object.keys(schema.properties).length > 0) {
           for (let attr in schema.properties) {
-            objData[attr] = recursionJsonSchema(path.concat(attr), schema.properties[attr]);
+            objData[attr] = recursionJsonSchema(
+              path.concat(attr),
+              schema.properties[attr],
+              childRequireds
+            );
           }
         }
         return objData;
@@ -234,6 +272,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
           type,
           allow_null,
           description,
+          is_required,
         });
         if (!schema.items) {
           return [];
@@ -244,7 +283,11 @@ const MockSchema = function ApipostMockSchema(this: any) {
 
         if (_.isArray(item.anyOf)) {
           items.push(
-            recursionJsonSchema(path.concat('0'), item.anyOf[_.random(0, item.anyOf.length - 1)])
+            recursionJsonSchema(
+              path.concat('0'),
+              item.anyOf[_.random(0, item.anyOf.length - 1)],
+              childRequireds
+            )
           );
           // for (let option of item.anyOf) {
           //     items.push(recursionJsonSchema(option));
@@ -253,12 +296,16 @@ const MockSchema = function ApipostMockSchema(this: any) {
 
         if (_.isArray(item.oneOf)) {
           items.push(
-            recursionJsonSchema(path.concat('0'), item.oneOf[_.random(0, item.oneOf.length - 1)])
+            recursionJsonSchema(
+              path.concat('0'),
+              item.oneOf[_.random(0, item.oneOf.length - 1)],
+              childRequireds
+            )
           );
         }
 
         while (items.length < (schema.minItems || 1)) {
-          items.push(recursionJsonSchema(path.concat('0'), item));
+          items.push(recursionJsonSchema(path.concat('0'), item, childRequireds));
         }
 
         return schema.maxItems ? _.take(items, schema.maxItems) : items;
@@ -323,6 +370,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
           type,
           allow_null,
           description,
+          is_required,
         });
 
         return strVal;
@@ -369,6 +417,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
           type,
           allow_null,
           description,
+          is_required,
         });
         return numVal;
         break;
