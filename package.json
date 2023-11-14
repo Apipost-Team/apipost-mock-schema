@@ -1,23 +1,23 @@
 {
   "name": "apipost-mock-schema",
-  "version": "0.0.14",
+  "version": "0.0.29",
   "description": "Simple utility to mock example objects based on JSON schema definitions",
   "main": "dist/index.js",
   "files": [
-    "libs",
-    "icons",
     "dist"
   ],
   "scripts": {
     "test": "jest",
-    "build": "npm version patch && rollup -c rollup.config.js && npm publish"
+    "build": "rollup -c rollup.config.js",
+    "build-publish": "npm version patch && rollup -c rollup.config.js && npm publish"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "core-js": "^3.9.0",
     "lodash": "^4.17.21",
-    "mockjs": "^1.1.0",
+    "mockjs5-pro": "^1.0.3",
+    "minimatch": "^9.0.3",
     "rollup": "^2.74.1",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-node-resolve": "^5.2.0",
