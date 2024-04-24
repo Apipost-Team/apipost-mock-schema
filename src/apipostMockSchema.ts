@@ -69,7 +69,6 @@ const MockSchema = function ApipostMockSchema(this: any) {
                 }
               }
             })(schema);
-
             resolve(recursionJsonSchema([], schema, true, rules));
           } catch (e: any) {
             reject({});
@@ -420,6 +419,9 @@ const MockSchema = function ApipostMockSchema(this: any) {
                 ? Number(intelligentMockJs(String(item?.mock)))
                 : Number(intelligentMockJs(`@integer(${min}, ${max})`));
             } catch (e) {
+              numVal = Number(intelligentMockJs(`@integer(${min}, ${max})`));
+            }
+            if (schemaMin || schemaMax) {
               numVal = Number(intelligentMockJs(`@integer(${min}, ${max})`));
             }
           }
