@@ -290,7 +290,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
         if (_.isArray(item.anyOf)) {
           items.push(
             recursionJsonSchema(
-              path.concat('0'),
+              path,
               item.anyOf[_.random(0, item.anyOf.length - 1)],
               childRequireds,
               rules
@@ -301,7 +301,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
         if (_.isArray(item.oneOf)) {
           items.push(
             recursionJsonSchema(
-              path.concat('0'),
+              path,
               item.oneOf[_.random(0, item.oneOf.length - 1)],
               childRequireds,
               rules
@@ -310,7 +310,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
         }
 
         while (items.length < (schema.minItems || 1)) {
-          items.push(recursionJsonSchema(path.concat('0'), item, childRequireds, rules));
+          items.push(recursionJsonSchema(path, item, childRequireds, rules));
         }
 
         return schema.maxItems ? _.take(items, schema.maxItems) : items;
