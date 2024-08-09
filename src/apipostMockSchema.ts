@@ -367,7 +367,7 @@ const MockSchema = function ApipostMockSchema(this: any, options: any = {}) {
           } else {
             if (!str) {
               if (_.isString(schema.mockField) && schema.mockField.trim()) {
-                strVal = String(intelligentMockJs(schema.mockField || is_only_english ? '@title' : '@ctitle'));
+                strVal = String(intelligentMockJs(schema.mockField || (is_only_english ? '@title' : '@ctitle')));
               } else {
                 try {
                   const item: any = matchMockRules(_.last(path), schema?.type, rules);
