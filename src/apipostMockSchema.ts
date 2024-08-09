@@ -9,7 +9,20 @@ import { MockDataProps } from './type';
 /**
  * 定义 MockSchema 类
  */
-const MockSchema = function ApipostMockSchema(this: any) {
+const MockSchema = function ApipostMockSchema(this: any, options: any = {}) {
+  if (typeof options !== 'object' || options === null) {
+    options = {};
+  }
+  // 验证并设置 app 和 is_only_english
+  if ('app' in options && options.app !== undefined) {
+    this.app = options.app;
+  } else {
+    this.app = 'apipost';
+  }
+
+  this.is_only_english = this.app == "echoapi" ? true : false; // 是否只生成英文,只有apipost需要非英文
+  let is_only_english = this.is_only_english;
+
   let mockDataList: MockDataProps[] = [];
 
   // mock 一个jsonschema
@@ -341,7 +354,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
               'json-pointer': '/foo/bar',
               'date-time': new Date('1970-01-01').toJSON(),
               uuid: uuid.v4(),
-              _default: intelligentMockJs(`@title(${minln}, ${maxln})`),
+              _default: intelligentMockJs(is_only_english ? `@title(${minln}, ${maxln})` : `@ctitle(${minln}, ${maxln})`),
             };
 
             str = formatExample[schema.format] || formatExample._default;
@@ -354,15 +367,15 @@ const MockSchema = function ApipostMockSchema(this: any) {
           } else {
             if (!str) {
               if (_.isString(schema.mockField) && schema.mockField.trim()) {
-                strVal = String(intelligentMockJs(schema.mockField || '@title'));
+                strVal = String(intelligentMockJs(schema.mockField || is_only_english ? '@title' : '@ctitle'));
               } else {
                 try {
                   const item: any = matchMockRules(_.last(path), schema?.type, rules);
                   strVal = _.isObject(item) && (item?.mock_type === 1 || item?.mock_type === 2)
                     ? intelligentMockJs(String(item?.mock))
-                    : intelligentMockJs(`@title(${minln}, ${maxln})`);
+                    : intelligentMockJs(is_only_english ? `@title(${minln}, ${maxln})` : `@ctitle(${minln}, ${maxln})`);
                 } catch (e) {
-                  strVal = intelligentMockJs(`@title(${minln}, ${maxln})`);
+                  strVal = intelligentMockJs(is_only_english ? `@title(${minln}, ${maxln})` : `@ctitle(${minln}, ${maxln})`);
                 }
               }
             }
