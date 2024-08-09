@@ -335,13 +335,13 @@ const MockSchema = function ApipostMockSchema(this: any) {
               hostname: 'apipost.cn',
               ipv4: intelligentMockJs(`@ip()`),
               ipv6: '2400:da00::dbf:0:100',
-              uri: 'https://echo.apipost.cn/get.php',
+              uri: 'https://www.example.com',
               'uri-reference': '/path#anchor',
               'uri-template': '/path/{param}',
               'json-pointer': '/foo/bar',
               'date-time': new Date('1970-01-01').toJSON(),
               uuid: uuid.v4(),
-              _default: intelligentMockJs(`@ctitle(${minln}, ${maxln})`),
+              _default: intelligentMockJs(`@title(${minln}, ${maxln})`),
             };
 
             str = formatExample[schema.format] || formatExample._default;
@@ -354,15 +354,15 @@ const MockSchema = function ApipostMockSchema(this: any) {
           } else {
             if (!str) {
               if (_.isString(schema.mockField) && schema.mockField.trim()) {
-                strVal = String(intelligentMockJs(schema.mockField || '@ctitle'));
+                strVal = String(intelligentMockJs(schema.mockField || '@title'));
               } else {
                 try {
                   const item: any = matchMockRules(_.last(path), schema?.type, rules);
                   strVal = _.isObject(item) && (item?.mock_type === 1 || item?.mock_type === 2)
                     ? intelligentMockJs(String(item?.mock))
-                    : intelligentMockJs(`@ctitle(${minln}, ${maxln})`);
+                    : intelligentMockJs(`@title(${minln}, ${maxln})`);
                 } catch (e) {
-                  strVal = intelligentMockJs(`@ctitle(${minln}, ${maxln})`);
+                  strVal = intelligentMockJs(`@title(${minln}, ${maxln})`);
                 }
               }
             }
