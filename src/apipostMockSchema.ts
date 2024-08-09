@@ -332,7 +332,7 @@ const MockSchema = function ApipostMockSchema(this: any) {
           if (_.isString(schema.format)) {
             const formatExample: any = {
               email: intelligentMockJs(`@email()`),
-              hostname: 'apipost.cn',
+              hostname: 'example.com',
               ipv4: intelligentMockJs(`@ip()`),
               ipv6: '2400:da00::dbf:0:100',
               uri: 'https://www.example.com',
